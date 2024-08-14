@@ -2,27 +2,26 @@ package org.skypro.skyshop.product;
 
 import org.skypro.skyshop.service.Searchable;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Article implements Searchable {
-    static final String PATH="resource/articles/";
+    static final String PATH = "resource/articles/";
     private final String title;
     private final String content;
 
-    public Article(String title, String content) {
+    public Article (String title, String content) throws IllegalArgumentException {
+        if (title == null || content == null) {
+            throw new IllegalArgumentException("Заголовок или содержание статьи не могут быть null");
+        }
         this.title = title;
         this.content = content;
     }
 
-    public Article (String filename) throws IOException {
-//        File file = new File(PATH+filename);
-//        if (file.exists()) {
-        System.out.println("filename = " + filename);
-        this.title = filename.substring(0, filename.lastIndexOf('.'));;
-            this.content = new String(Files.readAllBytes(Paths.get(PATH+filename)));
+    public Article(String filename) throws IOException {
+        this.title = filename.substring(0, filename.lastIndexOf('.'));
+        this.content = new String(Files.readAllBytes(Paths.get(PATH + filename)));
     }
 
     public String getTitle() {
@@ -54,8 +53,6 @@ public class Article implements Searchable {
     public String getContentName() {
         return title;
     }
-
-
 
 
 }

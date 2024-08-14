@@ -5,7 +5,10 @@ import org.skypro.skyshop.service.Searchable;
 public abstract class Product implements Searchable {
     private final String name;
 
-    public Product(String name) {
+    public Product(String name) throws IllegalArgumentException {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Наименование продукта не может быть null или пустой строкой");
+        }
         this.name = name;
     }
 

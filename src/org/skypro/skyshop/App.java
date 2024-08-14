@@ -1,6 +1,7 @@
 package org.skypro.skyshop;
 
 import org.skypro.skyshop.basket.ProductBasket;
+import org.skypro.skyshop.exception.BestResultNotFoundException;
 import org.skypro.skyshop.product.*;
 import org.skypro.skyshop.service.SearchEngine;
 
@@ -21,12 +22,11 @@ public class App {
             Product product9 = new DiscountedProduct("Выключатель одноклавишный, 16А 250В", 20, 20);
             Product product10 = new FixPriceProduct("Розетка силовая с заземлением красная РКС- 20-32-П-К");
 
-
             Article article1 = new Article("HFLTx - миф.txt");
             Article article2 = new Article("Выбираем УЗО для безопасного электрощита.txt");
             Article article3 = new Article("Знакомьтесь, Avanti!.txt");
 
-            System.out.println(article1.toString());
+            System.out.println(article1);
 
             SearchEngine searchEngine = new SearchEngine(15);
             searchEngine.add(article1);
@@ -47,6 +47,10 @@ public class App {
             System.out.println("searchEngine.search(\"сил\") = " + Arrays.toString(searchEngine.search("сил")));
             System.out.println("searchEngine.search(\"Кабель\") = " + Arrays.toString(searchEngine.search("Кабель")));
             System.out.println("searchEngine.search(\"ключ\") = " + Arrays.toString(searchEngine.search("ключ")));
+
+            System.out.println("searchEngine.getBestResult(\"Кабель\") = " + searchEngine.getBestResult("Кабель"));
+            System.out.println("searchEngine.getBestResult(\"УЗО\") = " + searchEngine.getBestResult("УЗО"));
+            System.out.println("searchEngine.getBestResult(\"узор\") = " + searchEngine.getBestResult("узор"));
 
 
             ProductBasket basket1 = new ProductBasket();
@@ -79,9 +83,8 @@ public class App {
             System.out.println("basket1.getCostProducts() = " + basket1.getCostProducts());
             System.out.println("basket1.isContains(\"Product 3\") = " + basket1.isContains("Product 2"));
 
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException | BestResultNotFoundException |NullPointerException e) {
             System.out.println(e.getMessage());
         }
-
     }
 }

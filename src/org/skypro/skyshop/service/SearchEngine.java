@@ -1,5 +1,7 @@
 package org.skypro.skyshop.service;
 
+import org.skypro.skyshop.exception.BestResultNotFoundException;
+
 public class SearchEngine {
     private final Searchable[] elements;
     private int resultsSize = 5;
@@ -48,6 +50,29 @@ public class SearchEngine {
             }
         }
         return results;
-
     }
+
+    public Searchable getBestResult(String query) throws BestResultNotFoundException {
+        if (query == null || query.isBlank()) {
+            throw new NullPointerException("Не задан текст запроса");
+        }
+        Searchable bestResult = null;
+        int bestCount = 0;
+        for (Searchable element : this.elements) {
+            if (element == null) {
+                continue;
+            }
+            int count = element.getCountTerm(query);
+            if (count > bestCount) {
+                bestCount = count;
+                bestResult = element;
+            }
+        }
+        if (bestResult != null) {
+            return bestResult;
+        } else {
+            throw new BestResultNotFoundException("Не найдены подходящие результаты для запроса: " + query);
+        }
+    }
+
 }
