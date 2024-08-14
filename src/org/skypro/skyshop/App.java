@@ -6,7 +6,7 @@ import org.skypro.skyshop.product.*;
 import org.skypro.skyshop.service.SearchEngine;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) {
@@ -25,13 +25,15 @@ public class App {
             Article article1 = new Article("HFLTx - миф.txt");
             Article article2 = new Article("Выбираем УЗО для безопасного электрощита.txt");
             Article article3 = new Article("Знакомьтесь, Avanti!.txt");
+            Article article4 = new Article("Тестовая статья", "Тест, УЗО выключатель автоматический, провод");
 
             System.out.println(article1);
 
-            SearchEngine searchEngine = new SearchEngine(15);
+            SearchEngine searchEngine = new SearchEngine();
             searchEngine.add(article1);
             searchEngine.add(article2);
             searchEngine.add(article3);
+            searchEngine.add(article4);
             searchEngine.add(product1);
             searchEngine.add(product2);
             searchEngine.add(product3);
@@ -43,21 +45,21 @@ public class App {
             searchEngine.add(product9);
             searchEngine.add(product10);
 
-            System.out.println("searchEngine.search(\"Avanti\") = " + Arrays.toString(searchEngine.search("Avanti")));
-            System.out.println("searchEngine.search(\"сил\") = " + Arrays.toString(searchEngine.search("сил")));
-            System.out.println("searchEngine.search(\"Кабель\") = " + Arrays.toString(searchEngine.search("Кабель")));
-            System.out.println("searchEngine.search(\"ключ\") = " + Arrays.toString(searchEngine.search("ключ")));
+            searchEngine.search("Avanti").forEach(System.out::println);
+            searchEngine.search("сил").forEach(System.out::println);
+            searchEngine.search("Кабель").forEach(System.out::println);
+            searchEngine.search("ключ").forEach(System.out::println);
 
             System.out.println("searchEngine.getBestResult(\"Кабель\") = " + searchEngine.getBestResult("Кабель"));
             System.out.println("searchEngine.getBestResult(\"УЗО\") = " + searchEngine.getBestResult("УЗО"));
-            System.out.println("searchEngine.getBestResult(\"узор\") = " + searchEngine.getBestResult("узор"));
+//            System.out.println("searchEngine.getBestResult(\"узор\") = " + searchEngine.getBestResult("узор"));
 
 
             ProductBasket basket1 = new ProductBasket();
             ProductBasket basket2 = new ProductBasket();
 
             basket1.addProduct(product1);
-            basket1.addProduct(product2);
+            basket1.addProduct(product1);
             basket1.addProduct(product4);
             basket1.addProduct(product5);
             basket1.addProduct(product6);
@@ -69,10 +71,22 @@ public class App {
             basket2.addProduct(product10);
 
             basket1.print();
+            List<Product> removed = basket1.remove("Кабель КСРВнг(А)-FRLSLTx");
+            removed.forEach(System.out::println);
+            removed = basket1.remove("Avanti Выключатель одноклавишный");
+            basket1.print();
+            if (!removed.isEmpty()) {
+                removed.forEach(System.out::println);
+            } else {
+                System.out.println("Список пуст");
+            }
+
+            basket1.print();
+
             basket2.print();
 
-            System.out.println("basket1.getCostProducts() = " + basket1.getCostProducts());
-            System.out.println("basket2.getCostProducts() = " + basket2.getCostProducts());
+            System.out.println("basket1.getCostProducts() = " + basket1.getTotalCost());
+            System.out.println("basket2.getCostProducts() = " + basket2.getTotalCost());
 
             System.out.println("basket2.isContains(\"Product 1\") = " + basket2.isContains("Product 1"));
             System.out.println("basket2.isContains(\"Product 2\") = " + basket2.isContains("Product 2"));
@@ -80,10 +94,10 @@ public class App {
             basket1.clear();
 
             basket1.print();
-            System.out.println("basket1.getCostProducts() = " + basket1.getCostProducts());
+            System.out.println("basket1.getCostProducts() = " + basket1.getTotalCost());
             System.out.println("basket1.isContains(\"Product 3\") = " + basket1.isContains("Product 2"));
 
-        } catch (IOException | IllegalArgumentException | BestResultNotFoundException |NullPointerException e) {
+        } catch (IOException | IllegalArgumentException | BestResultNotFoundException | NullPointerException e) {
             System.out.println(e.getMessage());
         }
     }

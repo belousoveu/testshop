@@ -28,7 +28,7 @@ public class DiscountedProduct extends Product {
     }
 
     public String toString() {
-        return String.format("%s : %d (%d%%%%)\n", super.getName(), this.getPrice(), discount);
+        return String.format("%s : %d (%d%%)\n", super.getName(), this.getPrice(), discount);
     }
 }
 

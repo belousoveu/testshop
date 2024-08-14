@@ -2,21 +2,22 @@ package org.skypro.skyshop.service;
 
 import org.skypro.skyshop.exception.BestResultNotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchEngine {
-    private final Searchable[] elements;
-    private int resultsSize = 5;
+    private final List<Searchable> elements;
+    private int resultsSize = 5; // TODO: Оставлено для будущего постраничного вывода результата (нужно будет переименовать поле)
     private int searchAreaSize;
 
-    public SearchEngine(int size) {
-        this.searchAreaSize = size;
-        this.elements = new Searchable[size];
+    public SearchEngine() {
+        this.searchAreaSize = 0;
+        this.elements = new ArrayList<>();
     }
 
     public void add(Searchable element) {
-        if (this.searchAreaSize > 0) {
-            this.elements[this.searchAreaSize - 1] = element;
-            this.searchAreaSize--;
-        }
+        this.elements.add(element);
+        this.searchAreaSize++;
     }
 
     public int getResultsSize() {
@@ -31,22 +32,17 @@ public class SearchEngine {
         this.resultsSize = resultsSize;
     }
 
-    public Searchable[] search(String query) {
+    public List<Searchable> search(String query) {
         if (query == null) {
-            return new Searchable[0];
+            return new ArrayList<>();
         }
-        Searchable[] results = new Searchable[this.resultsSize];
-        int i = 0;
+        List<Searchable> results = new ArrayList<>();
         for (Searchable element : this.elements) {
             if (element == null) {
                 continue;
             }
             if (element.searchArea().contains(query)) {
-                results[i] = element;
-                i++;
-            }
-            if (i == this.resultsSize) {
-                break;
+                results.add(element);
             }
         }
         return results;

@@ -13,7 +13,7 @@ public interface Searchable {
 
     default String getContentDescription() {
         return String.format("%s - %s", getContentName(), getContentType());
-    };
+    }
 
     default int getCountTerm(String query) {
         Pattern pattern = Pattern.compile(query);
