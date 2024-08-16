@@ -18,7 +18,7 @@ public class SimpleProduct extends Product {
     }
 
     public String toString() {
-        return String.format("%s : %d\n", super.getName(), price);
+        return String.format("%s : %d", super.getName(), price);
     }
 
     public boolean isSpecial() {

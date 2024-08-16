@@ -2,34 +2,35 @@ package org.skypro.skyshop.basket;
 
 import org.skypro.skyshop.product.Product;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductBasket {
-    private final List<Product> products = new LinkedList<>();
+    private final Map<Product, Integer> products = new HashMap<>();
     private int countProduct = 0;
     private int totalCost = 0;
 
     public void addProduct(Product product) {
-        products.add(product);
+        if (products.containsKey(product)) {
+            products.put(product, products.get(product) + 1);
+        } else {
+            products.put(product, 1);
+        }
         countProduct++;
         totalCost += product.getPrice();
     }
 
     public List<Product> remove(String name) {
-        List<Product> result = new ArrayList<>();
-        Iterator<Product> iterator = products.iterator();
-        while (iterator.hasNext()) {
-            Product product = iterator.next();
-            if (product.getName().equalsIgnoreCase(name)) {
-                result.add(product);
-                iterator.remove();
-                countProduct--;
-                totalCost -= product.getPrice();
-            }
-        }
+        List<Product> result = products.keySet().stream()
+                .filter(integer -> integer.getName().equals(name))
+                .toList();
+        result.forEach(product -> {
+            int quantity = products.get(product);
+            countProduct -= quantity;
+            totalCost -= product.getPrice() * quantity;
+            products.remove(product);
+        });
         return result;
     }
 
@@ -41,22 +42,14 @@ public class ProductBasket {
         if (this.isEmpty()) {
             return;
         }
-        int countSpecialProduct = 0;
-        for (Product product : products) {
-            System.out.printf(product.toString());
-            countSpecialProduct += product.isSpecial() ? 1 : 0;
-        }
+        products.forEach((product, quantity) -> System.out.print((product.toString() + "\n").repeat(quantity)));
+        int countSpecialProduct = (int) products.keySet().stream().filter(Product::isSpecial).count();
         System.out.printf("Итого : %d\n", getTotalCost());
         System.out.printf("Специальных товаров : %d\n", countSpecialProduct);
     }
 
     public boolean isContains(String name) {
-        for (Product product : products) {
-            if (product.getName().equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+        return products.keySet().stream().anyMatch(product -> product.getName().equals(name));
     }
 
     public boolean isEmpty() {

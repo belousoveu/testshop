@@ -2,17 +2,18 @@ package org.skypro.skyshop.service;
 
 import org.skypro.skyshop.exception.BestResultNotFoundException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 
 public class SearchEngine {
-    private final List<Searchable> elements;
+    private final Set<Searchable> elements;
     private int resultsSize = 5; // TODO: Оставлено для будущего постраничного вывода результата (нужно будет переименовать поле)
     private int searchAreaSize;
 
     public SearchEngine() {
         this.searchAreaSize = 0;
-        this.elements = new ArrayList<>();
+        this.elements = new HashSet<>();
     }
 
     public void add(Searchable element) {
@@ -32,43 +33,40 @@ public class SearchEngine {
         this.resultsSize = resultsSize;
     }
 
-    public List<Searchable> search(String query) {
-        if (query == null) {
-            return new ArrayList<>();
-        }
-        List<Searchable> results = new ArrayList<>();
-        for (Searchable element : this.elements) {
-            if (element == null) {
-                continue;
-            }
-            if (element.searchArea().contains(query)) {
-                results.add(element);
-            }
-        }
-        return results;
+    public Set<Searchable> search(String query) {
+        return this.elements.stream()
+                .filter(element -> element != null && element.searchArea().contains(query))
+                .collect(Collectors.toCollection(() -> new TreeSet<>(new SearchComparator())));
     }
 
     public Searchable getBestResult(String query) throws BestResultNotFoundException {
         if (query == null || query.isBlank()) {
             throw new NullPointerException("Не задан текст запроса");
         }
-        Searchable bestResult = null;
-        int bestCount = 0;
-        for (Searchable element : this.elements) {
-            if (element == null) {
-                continue;
-            }
-            int count = element.getCountTerm(query);
-            if (count > bestCount) {
-                bestCount = count;
-                bestResult = element;
-            }
-        }
-        if (bestResult != null) {
-            return bestResult;
-        } else {
-            throw new BestResultNotFoundException("Не найдены подходящие результаты для запроса: " + query);
-        }
+        return this.elements.stream()
+                .filter(Objects::nonNull)
+                .max(Comparator.comparing(element -> element.getCountTerm(query)))
+                .filter(element -> element.getCountTerm(query) > 0)
+                .orElseThrow(() -> new BestResultNotFoundException("Не найдены подходящие результаты для запроса: " + query));
     }
 
+
+    private static class SearchComparator implements Comparator<Searchable> {
+        @Override
+        public int compare(Searchable o1, Searchable o2) {
+            if (o1 == null && o2 == null) {
+                return 0;
+            }
+            if (o1 == null) {
+                return 1;
+            }
+            if (o2 == null) {
+                return -1;
+            }
+            if (o1.getContentName().length() == o2.getContentName().length()) {
+                return o1.getContentName().compareTo(o2.getContentName());
+            }
+            return o2.getContentName().length() - o1.getContentName().length();
+        }
+    }
 }

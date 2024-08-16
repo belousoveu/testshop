@@ -17,6 +17,6 @@ public class FixPriceProduct extends Product {
     }
 
     public String toString() {
-        return String.format("%s : Фиксированная цена %d\n", super.getName(), FIX_PRICE);
+        return String.format("%s : Фиксированная цена %d", super.getName(), FIX_PRICE);
     }
 }

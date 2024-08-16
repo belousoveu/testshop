@@ -27,8 +27,6 @@ public class App {
             Article article3 = new Article("Знакомьтесь, Avanti!.txt");
             Article article4 = new Article("Тестовая статья", "Тест, УЗО выключатель автоматический, провод");
 
-            System.out.println(article1);
-
             SearchEngine searchEngine = new SearchEngine();
             searchEngine.add(article1);
             searchEngine.add(article2);
@@ -45,14 +43,23 @@ public class App {
             searchEngine.add(product9);
             searchEngine.add(product10);
 
+            System.out.println("\nВывод результатов поисковых запросов (метод search()):");
             searchEngine.search("Avanti").forEach(System.out::println);
+            System.out.println();
             searchEngine.search("сил").forEach(System.out::println);
+            System.out.println();
             searchEngine.search("Кабель").forEach(System.out::println);
+            System.out.println();
             searchEngine.search("ключ").forEach(System.out::println);
 
-            System.out.println("searchEngine.getBestResult(\"Кабель\") = " + searchEngine.getBestResult("Кабель"));
-            System.out.println("searchEngine.getBestResult(\"УЗО\") = " + searchEngine.getBestResult("УЗО"));
-//            System.out.println("searchEngine.getBestResult(\"узор\") = " + searchEngine.getBestResult("узор"));
+            System.out.println("\nВывод результатов поисковых запросов (метод getBestResult()):");
+            try {
+                System.out.println("searchEngine.getBestResult(\"УЗО\") = " + searchEngine.getBestResult("УЗО"));
+                System.out.println("searchEngine.getBestResult(\"Кабель\") = " + searchEngine.getBestResult("Ка"));
+                System.out.println("searchEngine.getBestResult(\"узор\") = " + searchEngine.getBestResult("узор"));
+            } catch (BestResultNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
 
 
             ProductBasket basket1 = new ProductBasket();
@@ -70,34 +77,42 @@ public class App {
             basket2.addProduct(product8);
             basket2.addProduct(product10);
 
+            System.out.println("\nВывод содержимого корзины (метод print()):");
             basket1.print();
+
+            System.out.println("\nВывод списка удаленных товаров (метод remove()):");
             List<Product> removed = basket1.remove("Кабель КСРВнг(А)-FRLSLTx");
             removed.forEach(System.out::println);
             removed = basket1.remove("Avanti Выключатель одноклавишный");
-            basket1.print();
             if (!removed.isEmpty()) {
                 removed.forEach(System.out::println);
             } else {
                 System.out.println("Список пуст");
             }
 
+            System.out.println("\nВывод содержимого корзины после удаления товара (метод print()):");
             basket1.print();
-
             basket2.print();
 
+            System.out.println("\nВывод стоимости товаров (метод getTotalCost()):");
             System.out.println("basket1.getCostProducts() = " + basket1.getTotalCost());
             System.out.println("basket2.getCostProducts() = " + basket2.getTotalCost());
 
-            System.out.println("basket2.isContains(\"Product 1\") = " + basket2.isContains("Product 1"));
-            System.out.println("basket2.isContains(\"Product 2\") = " + basket2.isContains("Product 2"));
 
+            System.out.println("basket2.isContains(\"Product 1\") = " + basket2.isContains("Кабель КСРВнг(А)-FRLSLTx"));
+            System.out.println("basket2.isContains(\"Product 2\") = " + basket2.isContains("Провод силовой ПуГВ 1х6"));
+
+            String productName = "Провод силовой ПуГВ 1х6";
+            System.out.println("basket2.isContains(productName) = " + basket2.isContains(productName));
+            System.out.println("productName.hashCode() = " + productName.hashCode());
+            System.out.println("product2.hashCode() = " + product2.hashCode());
             basket1.clear();
 
             basket1.print();
             System.out.println("basket1.getCostProducts() = " + basket1.getTotalCost());
-            System.out.println("basket1.isContains(\"Product 3\") = " + basket1.isContains("Product 2"));
+            System.out.println("basket1.isContains(\"Product 4\") = " + basket1.isContains("Провод СИП-4 4х16"));
 
-        } catch (IOException | IllegalArgumentException | BestResultNotFoundException | NullPointerException e) {
+        } catch (IOException | IllegalArgumentException | NullPointerException e) {
             System.out.println(e.getMessage());
         }
     }
